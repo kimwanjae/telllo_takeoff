@@ -1,0 +1,31 @@
+import socket
+import time
+
+tello_address = ('192.168.10.1', 8889)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(('', 9000))
+
+def send(message):
+  try:
+    sock.sendto(message.encode(), tello_address)
+    print("Sending message: " + message)
+  except Exception as e:
+    print("Error sending: " + str(e))
+
+def receive():
+  try:
+    response, ip_address = sock.recvfrom(128)
+    print("Received message: " + response.decode(encoding='utf-8') + " from Tello with IP: " + str(ip_address))
+  except Exception as e:
+    print("Error receiving: " + str(e))
+
+
+send("command")
+receive()
+time.sleep(3)
+
+send("battery?")
+receive()
+
+
+sock.close()
